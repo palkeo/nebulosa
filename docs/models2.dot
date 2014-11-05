@@ -1,0 +1,46 @@
+digraph model_graph {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+
+    graph [
+        splines=ortho,
+        nodesep=1
+    ]
+
+    node [
+        fontname = "Bitstream Vera Sans"
+        fontsize = 8
+        shape = "record"
+    ]
+
+    edge [
+        fontname = "Bitstream Vera Sans"
+        fontsize = 8
+        arrowhead=none
+    ]
+
+	rss_models_Category	 [
+		label="{Category|+ id : int\l+ name : string}"
+    ]
+	rss_models_Concept	 [
+		label="{Concept|+ id : int\l+ name : string}"
+    ]
+	rss_models_Feed	 [
+		label="{Feed|+ id : int\l+ title : string\l+ url : string}"
+    ]
+	rss_models_Feed -> rss_models_Category	 [
+        headlabel="1",
+        taillabel="0..*",
+    ]
+	rss_models_Entry	 [
+		label="{Entry|+ id : int\l+ content : string\l+ date : date\l+ title : string\l+ url : string}"
+    ]
+	rss_models_Entry -> rss_models_Concept	 [
+        headlabel="0..*",
+        taillabel="0..*",
+    ]
+	rss_models_Entry -> rss_models_Feed	 [
+        headlabel="1",
+        taillabel="0..*",
+    ]
+}

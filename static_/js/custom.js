@@ -1,3 +1,5 @@
+var category = '';
+
 $(function() {
     var query = $('#query').magicSuggest({
         data: '/concepts',
@@ -7,12 +9,23 @@ $(function() {
         toggleOnClick: true
     });
     $(query).on('selectionchange', function(e,m) {
-        var word = this.getValue()[0]
+        var word = this.getValue()[0];
         $.getJSON(
             "/nebulosa",
-            {'name': word},
+            {'name': word, 'category': category},
             function(data) {
                 nebu(word, data['related']);
+                $('#last_articles').html(data['last_articles']);
+            }
+        );
+    });
+    $('.category-link').on('click', function() {
+        category = $(this).attr('title');
+         $.getJSON(
+            "/nebulosa",
+            {'category': category},
+            function(data) {
+                nebu(category, data['related']);
                 $('#last_articles').html(data['last_articles']);
             }
         );
@@ -38,7 +51,7 @@ function newgraph()
 
     $.getJSON(
         "/nebulosa",
-        {'name': centralword},
+        {'name': centralword, 'category': category},
         function(data) {
             nebu(centralword, data['related']);
             $('#last_articles').html(data['last_articles']);

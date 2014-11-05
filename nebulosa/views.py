@@ -8,7 +8,7 @@ from rss.models import Concept, Entry, Category
 import json
 
 def home(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'categories': Category.objects.all()})
 
 @csrf_exempt
 def concepts(request):
@@ -24,11 +24,12 @@ def concepts(request):
 
 def related(request):
     entries = Entry.objects.all()
-    if 'name' in request.GET:
-        concept = get_object_or_404(Concept, name=request.GET['name'])
+    concept = None
+    if request.GET.get('name', '').strip():
+        concept = get_object_or_404(Concept, name=request.GET['name'].strip())
         entries = concept.entries.all()
-    if 'category' in request.GET:
-        category = get_object_or_404(Category, name=request.GET['category'])
+    if request.GET.get('category', '').strip():
+        category = get_object_or_404(Category, name=request.GET['category'].strip())
         entries = entries.filter(feed__category=category)
 
     related_concepts = Counter()
@@ -37,8 +38,8 @@ def related(request):
         related_concepts.update(entry.concepts.all())
 
     j = {
-            'related': [c.name for c, count in related_concepts.most_common(12)],
-            'last_articles': render_to_string('articles.html', {'articles': concept.entries.all().order_by('-date')[:10]}),
+            'related': [c.name for c, count in related_concepts.most_common(12)], # related_concepts.most_common(12),
+            'last_articles': render_to_string('articles.html', {'articles': concept.entries.all().order_by('-date')[:10] if concept else []}),
     }
 
     return HttpResponse(json.dumps(j), content_type='application/json')

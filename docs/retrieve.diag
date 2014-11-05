@@ -1,0 +1,13 @@
+seqdiag {
+  "Feeds Retriever"; "Feed"; "Article";
+  "Feeds Retriever" -> "Feed" [label = "retrieve feed"];
+  "Feed" -> "HTTP Stack" [label = "get(feed_url)"];
+  "Feed" <-- "HTTP Stack" [label = "list_of_articles"];
+  "Feed" -> "Article" [label = "retrieve_article"];
+  "Article"  -> "HTTP Stack" [label = "get(article_url)"];
+  "Article" <-- "HTTP Stack" [label = "article_content"];
+  "Article"  -> "HTTP Stack" [label = "post(opencalais_api, data=article_content)"];
+  "Article" <-- "HTTP Stack" [label = "article_concepts"];
+  "Article" -> "Local database" [label = "save_article"];
+}
+
